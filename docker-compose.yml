@@ -1,0 +1,68 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    hostname: postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    shm_size: 128mb
+    networks:
+      - laplace
+    environment:
+      POSTGRES_USER: laplace
+      POSTGRES_PASSWORD: lamlam
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    hostname: adminer
+    restart: always
+    networks:
+      - laplace
+    ports:
+      - 8080:8080
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    hostname: pgadmin
+    ports:
+      - "80:80"
+    networks:
+      - laplace
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: SuperSecret
+
+  mongodb:
+    container_name: mongodb
+    image: mongodb/mongodb-atlas-local
+    hostname: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - laplace
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=user
+      - MONGODB_INITDB_ROOT_PASSWORD=pass
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8083:8081
+    networks:
+      - laplace
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_URL: mongodb://user:pass@mongodb:27017/?directConnection=true
+      ME_CONFIG_BASICAUTH: false
+
+networks:
+  laplace:
+    driver: bridge
